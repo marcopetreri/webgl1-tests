@@ -1,9 +1,14 @@
-import { randInt } from './utility';
+import { render } from './render.js';
+import { randInt } from './utility.js';
 
 export default new Vue({
-  el: '#app',
   data: {
     loadedImage: null,
+  },
+  computed: {
+    canvas: function() {
+      return this.$refs['canvas'];
+    },
   },
   methods: {
     loadImage(evt) {
@@ -20,8 +25,7 @@ export default new Vue({
       }
     },
   },
-  created: function(params) {
-    console.log('ok');
-    console.log(randInt(1, 2));
+  created: function() {
+    // render();
   },
 });

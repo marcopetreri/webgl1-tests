@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="./index.js" type="module"></script>
   </head>
   <body>
     <div id="app" class="container">
@@ -22,7 +23,7 @@
           </div>
         </div>
         <div class="col-8">
-          <canvas id="canvas"></canvas>
+          <canvas ref="canvas"></canvas>
         </div>
       </div>
     </div>
@@ -50,7 +51,4 @@
       gl_FragColor = texture2D(u_image, v_texCoord);
     }
   </script>
-  <script src="utility.js" type="module"></script>
-  <script src="render.js" type="module"></script>
-  <script src="main.js" type="module"></script>
 </html>

@@ -1,6 +1,17 @@
-import { resizeCanvas, createProgram, createShader } from 'utility.js';
+import { resizeCanvas, createProgram, createShader } from './utility.js';
 
-function render(image) {
+export class Render {
+  canvas;
+  gl;
+  program;
+  constructor(canvas) {
+    this.canvas = canvas;
+    gl = canvas.getContext('webgl');
+    if (!gl) throw new Error('No webgl context available');
+  }
+}
+
+export function render(image) {
   let c = document.getElementById('canvas');
   resizeCanvas(c);
   let vsSource = document.getElementById('vs-source').text;
