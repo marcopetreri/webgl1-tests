@@ -9,7 +9,7 @@
                 <input type="file" @change="loadImage($event)">
               </div>
               <div class="form-group">
-                <img :src="image.src" v-if="image.src" class="mw-100">
+                <img ref="image" class="mw-100">
               </div>
             </div>
           </div>
@@ -23,7 +23,7 @@
 
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator';
-  import { Subject, Subscription, fromEvent } from 'rxjs';
+  import { Subject, Subscription, fromEvent, Observable } from 'rxjs';
   import Render from './ts/render';
   import { resizeCanvas } from './ts/utility';
   const vertexShaderSource = require('./shaders/vertex.glsl');
@@ -37,10 +37,8 @@
   export default class App extends Vue {
     public render: Render | null;
     public fileReader = new FileReader();
-    public image = new Image();
-    public imageSrc: string;
     public fileRead = fromEvent<FileReaderProgressEvent>(this.fileReader, 'load');
-    public imageLoad = fromEvent<HTMLImageElement>(this.image, 'load');
+    public imageLoad: Observable<Event>;
     public imageLoad$: Subscription;
     public fileRead$: Subscription;
 
@@ -49,13 +47,16 @@
       this.render = null;
       this.fileRead$ = this.fileRead.subscribe(event => {
         const tgt = event.target;
-        // this.image = new Image();
         this.image.src = tgt.result;
       });
     }
 
     public get canvas(): HTMLCanvasElement {
       return this.$refs.canvas as HTMLCanvasElement;
+    }
+
+    public get image(): HTMLImageElement {
+      return this.$refs.image as HTMLImageElement;
     }
 
     public get imageSource(): string {
@@ -69,13 +70,19 @@
     }
 
     private mounted() {
-      resizeCanvas(this.canvas);
+      this.imageLoad = fromEvent<Event>(this.image, 'load');
+      this.imageLoad$ = this.imageLoad.subscribe(event => {
+        this.render.render(this.image);
+      });
+
       this.render = new Render(this.canvas);
+      resizeCanvas(this.canvas);
       this.render.init(vertexShaderSource, fragmentShaderSource);
     }
 
     private destroyed() {
-      // this.imageLoad$.unsubscribe();
+      this.imageLoad$.unsubscribe();
+      this.fileRead$.unsubscribe();
     }
   }
 </script>
