@@ -6,7 +6,7 @@
             <div class="card-body">
               <div class="form-group">
                 <label for="">Choose an image</label>
-                <input type="file" @change="loadImage($event)">
+                <input type="file" @change="fileInputChange($event)">
               </div>
               <div class="form-group">
                 <img ref="image" class="mw-100">
@@ -24,6 +24,7 @@
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator';
   import { Subject, Subscription, fromEvent, Observable } from 'rxjs';
+  import { ajax } from 'rxjs/ajax';
   import Render from './ts/render';
   import { resizeCanvas } from './ts/utility';
   const vertexShaderSource = require('./shaders/vertex.glsl');
@@ -59,17 +60,23 @@
       return this.$refs.image as HTMLImageElement;
     }
 
-    public get imageSource(): string {
-      return this.image.src;
-    }
-
-    public loadImage(evt: Event) {
+    public fileInputChange(evt: Event) {
       const tgt = evt.target;
       const files = (<HTMLInputElement>tgt).files;
-      this.fileReader.readAsDataURL(files[0]);
+      this.loadImage(files[0]);
+    }
+
+    public loadImage(blob: Blob) {
+      this.fileReader.readAsDataURL(blob);
     }
 
     private mounted() {
+      const defaultImageLoad = ajax({
+        url: '/logo.png',
+        responseType: 'blob',
+      }).subscribe(data => {
+        this.loadImage(data.response);
+      });
       this.imageLoad = fromEvent<Event>(this.image, 'load');
       this.imageLoad$ = this.imageLoad.subscribe(event => {
         this.render.render(this.image);
