@@ -34,6 +34,8 @@
   import Render from './ts/render';
   import { resizeCanvas } from './ts/utility';
   import RenderParams from './ts/render-params.interface';
+  import { kernels } from './ts/kernels';
+  import Vec3 from './ts/vec3';
   const vertexShaderSource = require('./shaders/vertex.glsl');
   const fragmentShaderSource = require('./shaders/fragment.glsl');
 
@@ -55,85 +57,7 @@
     public imageLoad$: Subscription;
     public fileRead$: Subscription;
     public kernelsIndexes: number[] = [0];
-    public kernels = [
-      { name: 'None', data: [0, 0, 0, 0, 1, 0, 0, 0, 0] },
-      {
-        name: 'gaussianBlur',
-        data: [0.045, 0.122, 0.045, 0.122, 0.332, 0.122, 0.045, 0.122, 0.045],
-      },
-      {
-        name: 'gaussianBlur2',
-        data: [1, 2, 1, 2, 4, 2, 1, 2, 1],
-      },
-      {
-        name: 'gaussianBlur3',
-        data: [0, 1, 0, 1, 1, 1, 0, 1, 0],
-      },
-      {
-        name: 'unsharpen',
-        data: [-1, -1, -1, -1, 9, -1, -1, -1, -1],
-      },
-      {
-        name: 'sharpness',
-        data: [0, -1, 0, -1, 5, -1, 0, -1, 0],
-      },
-      {
-        name: 'sharpen',
-        data: [-1, -1, -1, -1, 16, -1, -1, -1, -1],
-      },
-      {
-        name: 'edgeDetect',
-        data: [-0.125, -0.125, -0.125, -0.125, 1, -0.125, -0.125, -0.125, -0.125],
-      },
-      {
-        name: 'edgeDetect2',
-        data: [-1, -1, -1, -1, 8, -1, -1, -1, -1],
-      },
-      {
-        name: 'edgeDetect3',
-        data: [-5, 0, 0, 0, 0, 0, 0, 0, 5],
-      },
-      {
-        name: 'edgeDetect4',
-        data: [-1, -1, -1, 0, 0, 0, 1, 1, 1],
-      },
-      {
-        name: 'edgeDetect5',
-        data: [-1, -1, -1, 2, 2, 2, -1, -1, -1],
-      },
-      {
-        name: 'edgeDetect6',
-        data: [-5, -5, -5, -5, 39, -5, -5, -5, -5],
-      },
-      {
-        name: 'sobelHorizontal',
-        data: [1, 2, 1, 0, 0, 0, -1, -2, -1],
-      },
-      {
-        name: 'sobelVertical',
-        data: [1, 0, -1, 2, 0, -2, 1, 0, -1],
-      },
-      {
-        name: 'previtHorizontal',
-        data: [1, 1, 1, 0, 0, 0, -1, -1, -1],
-      },
-      {
-        name: 'previtVertical',
-        data: [1, 0, -1, 1, 0, -1, 1, 0, -1],
-      },
-      {
-        name: 'boxBlur',
-        data: [0.111, 0.111, 0.111, 0.111, 0.111, 0.111, 0.111, 0.111, 0.111],
-      },
-      {
-        name: 'triangleBlur',
-        data: [0.0625, 0.125, 0.0625, 0.125, 0.25, 0.125, 0.0625, 0.125, 0.0625],
-      },
-      {
-        name: 'emboss',
-        data: [-2, -1, 0, -1, 1, 1, 0, 1, 2],
-      },
-    ];
+    public kernels = kernels;
 
     constructor() {
       super();
@@ -186,6 +110,22 @@
       this.imageLoad$ = this.imageLoad.subscribe(event => {
         this.render.render(this.renderParams);
       });
+
+      let a = new Vec3(1, 0, 0);
+      let b = new Vec3(0, 1, 0);
+      let c = new Vec3(0, 0, 1);
+
+      console.log(a, b, c);
+
+      console.log(
+        'neg ' + Vec3.neg(a),
+        'add ' + Vec3.add(a, b),
+        'sub ' + Vec3.sub(a, b),
+        'mul ' + Vec3.mul(a, 2),
+        'div ' + Vec3.div(a, 2),
+        'dot ' + Vec3.dot(a, b),
+        'cross ' + Vec3.cross(a, b)
+      );
     }
 
     private destroyed() {
