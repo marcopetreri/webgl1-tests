@@ -30,24 +30,47 @@ export default class Vec3 {
     );
   }
 
+  public static sqlen(u: Vec3): number {
+    return Vec3.dot(u, u);
+  }
+
   public static len(u: Vec3): number {
-    return Math.sqrt(Vec3.dot(u, u));
+    return Math.sqrt(Vec3.sqlen(u));
   }
 
   private _x: number;
   private _y: number;
   private _z: number;
 
-  constructor();
-  constructor(x: number);
-  constructor(x: number, y: number, z: number);
-  constructor(x?: number, y?: number, z?: number) {
+  constructor(
+    x?:
+      | Vec3
+      | { x: number; y: number; z: number }
+      | [number, number, number]
+      | number,
+    y?: number,
+    z?: number
+  ) {
     if (x != null && y != null && z != null) {
-      this._x = x;
+      this._x = x as number;
       this._y = y;
       this._z = z;
     } else if (x != null) {
-      this._x = this._y = this._z = x;
+      if (x instanceof Vec3) {
+        this._x = x.x;
+        this._y = x.y;
+        this._z = x.z;
+      } else if (x instanceof Array) {
+        this._x = x[0];
+        this._y = x[1];
+        this._z = x[2];
+      } else if (typeof x === 'number') {
+        this._x = this._y = this._z = x as number;
+      } else {
+        this._x = x.x;
+        this._y = x.y;
+        this._z = x.z;
+      }
     } else {
       this._x = this._y = this._z = 0;
     }
@@ -77,18 +100,52 @@ export default class Vec3 {
     return this._z;
   }
 
-  public add(v: Vec3) {
+  public neg() {
+    this._x = -this._x;
+    this._y = -this._y;
+    this._z = -this._z;
     return this;
   }
 
-  public sub(v: Vec3) {}
+  public add(v: Vec3) {
+    this._x += v.x;
+    this._y += v.y;
+    this._z += v.z;
+    return this;
+  }
 
-  public mul() {}
+  public sub(v: Vec3) {
+    this._x -= v.x;
+    this._y -= v.y;
+    this._z -= v.z;
+    return this;
+  }
 
-  public div() {}
+  public mul(s: number) {
+    this._x *= s;
+    this._y *= s;
+    this._z *= s;
+    return this;
+  }
 
-  public asArray(): number[] {
+  public div(s: number) {
+    return this.mul(1.0 / s);
+  }
+
+  public sqlen(): number {
+    return Vec3.dot(this, this);
+  }
+
+  public len(): number {
+    return Math.sqrt(this.sqlen());
+  }
+
+  public asArray(): [number, number, number] {
     return [this._x, this._y, this._z];
+  }
+
+  public asObject(): { x: number; y: number; z: number } {
+    return { x: this._x, y: this._y, z: this._z };
   }
 
   public toString() {
