@@ -35,7 +35,7 @@
   import { resizeCanvas } from './ts/utility';
   import RenderParams from './ts/render-params.interface';
   import { kernels } from './ts/kernels';
-  import Vec3 from './ts/vec3';
+  import { Vec3, Mat3 } from './ts/math';
   const vertexShaderSource = require('./shaders/vertex.glsl');
   const fragmentShaderSource = require('./shaders/fragment.glsl');
 
@@ -115,7 +115,7 @@
       let b = new Vec3(0, 1, 0);
       let c = new Vec3(0, 0, 1);
 
-      console.log(a, b, c);
+      console.log('a = ' + a, 'b = ' + b, 'c = ' + c);
 
       console.log(
         'neg ' + Vec3.neg(a),
@@ -126,6 +126,9 @@
         'dot ' + Vec3.dot(a, b),
         'cross ' + Vec3.cross(a, b)
       );
+
+      let m = new Mat3([1, 0, 1], [0, 0, 0], [0, 1, 0]);
+      console.log('m = ' + m);
     }
 
     private destroyed() {

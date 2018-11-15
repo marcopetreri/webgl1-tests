@@ -6,7 +6,7 @@ import {
 } from './utility';
 import RenderParams from './render-params.interface';
 import RenderToTexture from './render-to-texture';
-import Vec3 from './vec3';
+import { Vec3, Mat3 } from './math';
 
 export default class Render {
   private _gl: WebGLRenderingContext | null;

@@ -1,4 +1,6 @@
-export default class Vec3 {
+import { IVec3Object, IVec3Array } from './vec3.interface';
+
+export class Vec3 implements IVec3Object {
   public static neg(u: Vec3): Vec3 {
     return new Vec3(-u.x, -u.y, -u.z);
   }
@@ -42,34 +44,20 @@ export default class Vec3 {
   private _y: number;
   private _z: number;
 
-  constructor(
-    x?:
-      | Vec3
-      | { x: number; y: number; z: number }
-      | [number, number, number]
-      | number,
-    y?: number,
-    z?: number
-  ) {
-    if (x != null && y != null && z != null) {
-      this._x = x as number;
-      this._y = y;
-      this._z = z;
-    } else if (x != null) {
-      if (x instanceof Vec3) {
-        this._x = x.x;
-        this._y = x.y;
-        this._z = x.z;
-      } else if (x instanceof Array) {
-        this._x = x[0];
-        this._y = x[1];
-        this._z = x[2];
-      } else if (typeof x === 'number') {
-        this._x = this._y = this._z = x as number;
+  constructor(x?: Vec3 | number, y?: number, z?: number) {
+    if (x != null) {
+      if (y != null && z != null) {
+        this._x = x as number;
+        this._y = y;
+        this._z = z;
       } else {
-        this._x = x.x;
-        this._y = x.y;
-        this._z = x.z;
+        if (typeof x === 'number') {
+          this._x = this._y = this._z = x;
+        } else {
+          this._x = x.x;
+          this._y = x.y;
+          this._z = x.z;
+        }
       }
     } else {
       this._x = this._y = this._z = 0;
@@ -140,11 +128,11 @@ export default class Vec3 {
     return Math.sqrt(this.sqlen());
   }
 
-  public asArray(): [number, number, number] {
+  public asArray(): IVec3Array {
     return [this._x, this._y, this._z];
   }
 
-  public asObject(): { x: number; y: number; z: number } {
+  public asObject(): IVec3Object {
     return { x: this._x, y: this._y, z: this._z };
   }
 
