@@ -15,6 +15,7 @@ export default class Render {
   private _fs: WebGLShader | null;
   private _renderToTexture: RenderToTexture | null;
 
+  private _shaderTypes: { [key: string]: number };
   private _uniformLocations: {
     [key: string]: WebGLUniformLocation | null;
   } = {};
@@ -30,17 +31,18 @@ export default class Render {
     this._vs = null;
     this._fs = null;
     this._renderToTexture = null;
+    this._shaderTypes = {
+      VERTEX_SHADER: this._gl.VERTEX_SHADER,
+      FRAGMENT_SHADER: this._gl.FRAGMENT_SHADER
+    };
   }
 
   public init(vertexShaderSource: string, fragmentShaderSource: string) {
     if (!this._gl) {
       throw new Error('WebGL context is null');
     }
-    this._vs = this._createShader(this._gl.VERTEX_SHADER, vertexShaderSource);
-    this._fs = this._createShader(
-      this._gl.FRAGMENT_SHADER,
-      fragmentShaderSource
-    );
+    this._vs = this._createShader('VERTEX_SHADER', vertexShaderSource);
+    this._fs = this._createShader('FRAGMENT_SHADER', fragmentShaderSource);
     this._program = this._createProgram(this._vs, this._fs);
   }
 
@@ -142,6 +144,12 @@ export default class Render {
       ...texCoordBufferOptions
     );
 
+    this._gl.uniformMatrix3fv(
+      this._uniformLocations.transformMatrix,
+      false,
+      renderParams.transformMatrix.asGLArray()
+    );
+
     this._gl.uniform1f(this._uniformLocations.flipY, 1.0);
 
     this._gl.uniform2f(
@@ -208,6 +216,10 @@ export default class Render {
       this._program,
       'u_flipY'
     );
+    this._uniformLocations.transformMatrix = this._gl.getUniformLocation(
+      this._program,
+      'u_matrix'
+    );
     this._uniformLocations.image = this._gl.getUniformLocation(
       this._program,
       'u_image'
@@ -269,11 +281,13 @@ export default class Render {
     this._gl.viewport(0, 0, width, height);
   }
 
-  private _createShader(type: number, source: string) {
+  private _createShader(type: string, source: string) {
     if (!this._gl) {
       throw new Error('WebGL context not present');
     }
-    const shader = this._gl.createShader(type) as WebGLShader;
+    const shader = this._gl.createShader(
+      this._shaderTypes[type]
+    ) as WebGLShader;
     this._gl.shaderSource(shader, source);
     this._gl.compileShader(shader);
     const success = this._gl.getShaderParameter(
@@ -281,8 +295,9 @@ export default class Render {
       this._gl.COMPILE_STATUS
     );
     if (!success) {
+      const error = this._gl.getShaderInfoLog(shader);
       this._gl.deleteShader(shader);
-      throw new Error('Shader Error: ' + this._gl.getShaderInfoLog(shader));
+      throw new Error(type + ' -> ' + error);
     }
     return shader;
   }
@@ -300,8 +315,9 @@ export default class Render {
     this._gl.linkProgram(program);
     const success = this._gl.getProgramParameter(program, this._gl.LINK_STATUS);
     if (!success) {
+      const error = this._gl.getShaderInfoLog(program);
       this._gl.deleteProgram(program);
-      throw new Error('Program Error: ' + this._gl.getProgramInfoLog(program));
+      throw new Error('Program -> ' + error);
     }
     return program;
   }

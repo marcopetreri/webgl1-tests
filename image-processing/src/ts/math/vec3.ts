@@ -88,35 +88,35 @@ export class Vec3 implements IVec3Object {
     return this._z;
   }
 
-  public neg() {
+  public neg(): this {
     this._x = -this._x;
     this._y = -this._y;
     this._z = -this._z;
     return this;
   }
 
-  public add(v: Vec3) {
+  public add(v: Vec3): this {
     this._x += v.x;
     this._y += v.y;
     this._z += v.z;
     return this;
   }
 
-  public sub(v: Vec3) {
+  public sub(v: Vec3): this {
     this._x -= v.x;
     this._y -= v.y;
     this._z -= v.z;
     return this;
   }
 
-  public mul(s: number) {
+  public mul(s: number): this {
     this._x *= s;
     this._y *= s;
     this._z *= s;
     return this;
   }
 
-  public div(s: number) {
+  public div(s: number): this {
     return this.mul(1.0 / s);
   }
 
@@ -136,7 +136,7 @@ export class Vec3 implements IVec3Object {
     return { x: this._x, y: this._y, z: this._z };
   }
 
-  public toString() {
+  public toString(): string {
     return `(${this._x.toFixed(2)}, ${this._y.toFixed(2)}, ${this._z.toFixed(
       2
     )})`;
