@@ -22,8 +22,8 @@ export default class Render {
   private _attributeLocations: { [key: string]: number } = {};
   private _buffers: { [key: string]: WebGLBuffer | null } = {};
 
-  constructor(canvas: HTMLCanvasElement) {
-    this._gl = canvas.getContext('webgl');
+  constructor(canvas: HTMLCanvasElement, opts?: {}) {
+    this._gl = canvas.getContext('webgl', opts);
     if (this._gl === null) {
       throw new Error('No webgl context available');
     }
@@ -165,6 +165,8 @@ export default class Render {
         this._renderToTexture.activeCouple.framebuffer,
         renderParams.image.naturalWidth,
         renderParams.image.naturalHeight
+        // this._gl.canvas.width,
+        // this._gl.canvas.height
       );
 
       this._gl.uniform1fv(this._uniformLocations.kernel, kernel);

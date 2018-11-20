@@ -72,7 +72,19 @@
       kernelsIndexes(i: number) {
         this.draw();
       },
-      translate() {
+      'translate.x': function() {
+        this.draw();
+      },
+      'translate.y': function() {
+        this.draw();
+      },
+      'scale.x': function() {
+        this.draw();
+      },
+      'scale.y': function() {
+        this.draw();
+      },
+      'rotate.deg': function() {
         this.draw();
       },
     },
@@ -145,7 +157,7 @@
 
     private mounted() {
       resizeCanvas(this.canvas);
-      this.render = new Render(this.canvas);
+      this.render = new Render(this.canvas, { alpha: false });
       this.render.init(vertexShaderSource, fragmentShaderSource);
 
       const defaultImageLoad = ajax({
